@@ -18,8 +18,8 @@ namespace linalg {
         board_piece& operator=(board_piece&&) = delete;
         
         virtual void update(float dt) {}
-        virtual void draw(renderer& renderer) const = 0;
-        virtual point location() const = 0;
+        virtual void draw(renderer& renderer) = 0;
+        virtual point location() = 0;
     };
 }
 

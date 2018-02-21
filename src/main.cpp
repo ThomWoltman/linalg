@@ -6,6 +6,7 @@
 #include "image.h"
 #include <fstream>
 #include <Vect3D.h>
+#include <square.h>
 
 int main() {
     try {
@@ -18,12 +19,14 @@ int main() {
         linalg::Vect3D sample_vect2{{800.0, 0, 200.0}, {100.0, 300.0}};
         linalg::Vect3D sample_vect3{{0, 0, -200.0}, {900.0, 300.0, 200.0}};
 
-        s.add_board_piece(b);
+        //s.add_board_piece(b);
 //        s.add_board_piece(sample_vect);
 //        s.add_board_piece(sample_vect1);
-        s.add_board_piece(sample_vect2);
-        s.add_board_piece(sample_vect3);
+//        s.add_board_piece(sample_vect2);
+        //s.add_board_piece(sample_vect3);
 
+//        linalg::square square2d{{600.0, 600.0}, {500.0, 500.0}, {500.0, 600.0}, {600.0, 600.0}, {600.0, 500.0}};
+//        s.add_board_piece(square2d);
 
         s.play();
     }

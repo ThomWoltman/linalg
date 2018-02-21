@@ -74,6 +74,4 @@ namespace linalg {
     void renderer::render() const {
         SDL_RenderPresent(_ren);
     }
-
-    
 }

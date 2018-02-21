@@ -10,10 +10,10 @@ namespace linalg{
         point _origin;
     public:
         explicit Vect3D(point vector, point origin = point{}) : _origin{origin}, point{vector} {}
-        void draw(renderer& renderer) const override{
+        void draw(renderer& renderer) override{
             renderer.draw_line(_origin, _origin + *this);
         }
-        point location() const override { return _origin; }
+        point location() override { return _origin; }
     };
 }
 

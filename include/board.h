@@ -4,6 +4,7 @@
 #include "window.h"
 #include "renderer.h"
 #include "image.h"
+#include "square.h"
 #include <vector>
 
 namespace linalg {
@@ -11,12 +12,13 @@ namespace linalg {
     class board {
         window _window;
         renderer _renderer;
-        std::vector<const board_piece*> _board_pieces;
+        std::vector<board_piece*> _board_pieces;
+        square _square2d;
     public:
         board();
         renderer& get_renderer() { return _renderer; }
         void play();
-        void add_board_piece(const board_piece& a) {
+        void add_board_piece(board_piece& a) {
             _board_pieces.push_back(&a);
         }
     };

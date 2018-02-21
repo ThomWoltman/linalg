@@ -9,7 +9,7 @@ namespace linalg {
         point _location;
     public:
         free_roaming_board_piece(point location) : board_piece {}, _location {location} {}
-        point location() const override { return _location; } 
+        point location() override { return _location; }
     };
 }
 

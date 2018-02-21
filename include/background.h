@@ -11,7 +11,7 @@ namespace linalg {
         image _i;
     public:
         explicit background(const image &i) : free_roaming_board_piece { {640.0, 360.0} }, _i{i} {}
-        void draw(renderer& renderer) const override;
+        void draw(renderer& renderer) override;
     };
 }
 
