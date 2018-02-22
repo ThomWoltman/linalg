@@ -14,10 +14,30 @@ namespace linalg{
         }
 
         int i = 0;
-        for(point p : points){
-            data[0][i] = p.x();
-            data[1][i] = p.y();
-            i++;
+
+        if(row == 2){
+            for(point p : points){
+                data[0][i] = p.x();
+                data[1][i] = p.y();
+                i++;
+            }
+        }
+        else if(row == 3){
+            for(point p : points){
+                data[0][i] = p.x();
+                data[1][i] = p.y();
+                data[2][i] = p.z();
+                i++;
+            }
+        }
+        else if(row == 4){
+            for(point p : points){
+                data[0][i] = p.x();
+                data[1][i] = p.y();
+                data[2][i] = p.z();
+                data[3][i] = p.w();
+                i++;
+            }
         }
     }
 
@@ -103,20 +123,20 @@ namespace linalg{
 
     void matrix::alloc_space()
     {
-        data = new float*[_rows];
+        data = new double*[_rows];
         for (int i = 0; i < _rows; ++i) {
-            data[i] = new float[_columns];
+            data[i] = new double[_columns];
         }
     }
 
-    float matrix::dot_product(matrix, matrix) {
+    double matrix::dot_product(matrix, matrix) {
 
     }
 
-    matrix matrix::create_rotate_matrix(double degree) {
+    matrix matrix::create_rotate_matrix_2d(double degree) {
         matrix m = create_identity_matrix(3);
-        point a { (float)cos(degree), (float)sin(degree)};
-        point b { (float)-sin(degree), (float)cos(degree)};
+        point a { cos(degree), sin(degree)};
+        point b { -sin(degree), cos(degree)};
 
         m.data[0][0] = a.x();
         m.data[1][0] = a.y();
@@ -126,10 +146,19 @@ namespace linalg{
         return m;
     }
 
-    matrix matrix::create_translate_matrix(double x, double y) {
+    matrix matrix::create_translate_matrix_2d(double x, double y) {
         matrix temp = matrix::create_identity_matrix(3);
-        temp.data[0][2] = (float)x;
-        temp.data[1][2] = (float)y;
+        temp.data[0][2] = x;
+        temp.data[1][2] = y;
+
+        return temp;
+    }
+
+    matrix matrix::create_translate_matrix_3d(double x, double y, double z) {
+        matrix temp = matrix::create_identity_matrix(4);
+        temp.data[0][3] = x;
+        temp.data[1][3] = y;
+        temp.data[2][3] = z;
 
         return temp;
     }

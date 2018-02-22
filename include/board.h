@@ -5,6 +5,7 @@
 #include "renderer.h"
 #include "image.h"
 #include "square.h"
+#include "cube.h"
 #include <vector>
 
 namespace linalg {
@@ -14,6 +15,8 @@ namespace linalg {
         renderer _renderer;
         std::vector<board_piece*> _board_pieces;
         square _square2d;
+        cube _cube;
+        camera _camera;
     public:
         board();
         renderer& get_renderer() { return _renderer; }

@@ -9,21 +9,20 @@ namespace linalg {
     private:
         matrix _m;
         matrix _mutation;
-        float _width;
-        float _height;
+        double _width;
 
         void init_matrix(point origin){
             std::vector<point> points;
-            points.emplace_back(point{origin.x()-_width/2, origin.y()-_height/2});
-            points.emplace_back(point{origin.x()-_width/2, origin.y()+_height/2});
-            points.emplace_back(point{origin.x()+_width/2, origin.y()+_height/2});
-            points.emplace_back(point{origin.x()+_width/2, origin.y()-_height/2});
+            points.emplace_back(point{origin.x()-_width/2, origin.y()-_width/2});
+            points.emplace_back(point{origin.x()-_width/2, origin.y()+_width/2});
+            points.emplace_back(point{origin.x()+_width/2, origin.y()+_width/2});
+            points.emplace_back(point{origin.x()+_width/2, origin.y()-_width/2});
             points.push_back(origin);
 
             _m = matrix(2, 5, points);
         }
     public:
-        explicit square(point origin, float width, float height) : _width{width}, _height{height} {
+        explicit square(point origin, double width) : _width{width} {
             init_matrix(origin);
             init_mutation_matrix();
         };
@@ -32,7 +31,7 @@ namespace linalg {
             _mutation = matrix::create_identity_matrix(3);
         }
 
-        void draw(renderer &renderer) override {
+        void draw(renderer &renderer, camera cam) override {
 
             std::vector<point> points;
 
@@ -50,14 +49,14 @@ namespace linalg {
             }
         };
 
-        void update(float dt) override {
+        void update(double dt) override {
             matrix result = matrix::create_extra_row(_m) * _mutation;
             _m = matrix::remove_extra_row(result);
             init_mutation_matrix();
         }
 
         void move_x_y(double amount_x, double amount_y){
-            matrix translate = matrix::create_translate_matrix(amount_x, amount_y);
+            matrix translate = matrix::create_translate_matrix_2d(amount_x, amount_y);
             _mutation = _mutation * translate;
         }
 
@@ -71,7 +70,7 @@ namespace linalg {
 
             move_x_y(-origin.x(), -origin.y());
 
-            matrix rotate = matrix::create_rotate_matrix(degree);
+            matrix rotate = matrix::create_rotate_matrix_2d(degree);
             _mutation = _mutation * rotate;
 
             move_x_y(origin.x(), origin.y());

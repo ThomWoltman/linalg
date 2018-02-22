@@ -40,8 +40,11 @@ namespace linalg {
     }
 
     void renderer::draw_line(point from, point to) const {
+        if(from.w() < 0 || to.w() < 0){
+            return;
+        }
         set_color(color{100,100,255});
-        SDL_RenderDrawLine(_ren, from.x(), 720 - (from.y()+from.z()), to.x(), 720 - (to.y() + to.z()));
+        SDL_RenderDrawLine(_ren, from.x(), (from.y()), to.x(), (to.y()));
     }
 
     void renderer::draw_rect(point topLeft, point bottomRight) const {

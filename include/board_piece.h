@@ -3,6 +3,7 @@
 
 #include "point.h"
 #include "renderer.h"
+#include "camera.h"
 
 namespace linalg {
     class drawable;
@@ -17,8 +18,8 @@ namespace linalg {
         board_piece& operator=(const board_piece&) = delete;
         board_piece& operator=(board_piece&&) = delete;
         
-        virtual void update(float dt) {}
-        virtual void draw(renderer& renderer) = 0;
+        virtual void update(double dt) {}
+        virtual void draw(renderer& renderer, camera cam) = 0;
         virtual point location() = 0;
     };
 }

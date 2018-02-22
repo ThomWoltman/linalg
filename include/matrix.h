@@ -9,7 +9,7 @@ namespace linalg {
     private:
         int _rows;
         int _columns;
-        float **data;
+        double **data;
     public:
         matrix();
 
@@ -31,21 +31,23 @@ namespace linalg {
 
         void alloc_space();
 
-        static float dot_product(matrix, matrix);
+        static double dot_product(matrix, matrix);
 
-        inline float& operator()(int x, int y) { return data[x][y]; }
+        inline double& operator()(int x, int y) { return data[x][y]; }
 
-        float get_value(int row, int column) { return data[row][column]; }
+        double get_value(int row, int column) { return data[row][column]; }
 
         int get_rows() const { return _rows; }
 
         int get_columns() const { return _columns; }
 
-        static matrix create_translate_matrix(double x, double y);
+        static matrix create_translate_matrix_2d(double x, double y);
 
-        static matrix create_rotate_matrix(double degree);
+        static matrix create_rotate_matrix_2d(double degree);
 
         static matrix create_identity_matrix(int size);
+
+        static matrix create_translate_matrix_3d(double x, double y, double z);
 
         static matrix create_extra_row(matrix m);
 
