@@ -44,7 +44,7 @@ namespace linalg {
             return;
         }
         set_color(color{100,100,255});
-        SDL_RenderDrawLine(_ren, from.x(), (from.y()), to.x(), (to.y()));
+        SDL_RenderDrawLine(_ren, from.x(), 720-(from.y()), to.x(), 720-(to.y()));
     }
 
     void renderer::draw_rect(point topLeft, point bottomRight) const {
@@ -72,6 +72,10 @@ namespace linalg {
         r.w = w;
         r.h = h;
         SDL_RenderCopy(_ren, texture.unwrap(), nullptr, &r);
+    }
+
+    void renderer::draw_polygon() const {
+
     }
 
     void renderer::render() const {

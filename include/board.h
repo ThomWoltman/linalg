@@ -15,7 +15,8 @@ namespace linalg {
         renderer _renderer;
         std::vector<board_piece*> _board_pieces;
         square _square2d;
-        cube _cube;
+        cube _cube1;
+        cube _cube2;
         camera _camera;
     public:
         board();

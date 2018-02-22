@@ -63,25 +63,23 @@ namespace linalg {
             renderer.draw_line(points[4], points[7]);
             renderer.draw_line(points[5], points[6]);
             renderer.draw_line(points[6], points[7]);
-
-
-//            for(auto it = points.begin(); it != points.end(); it++){
-//                auto next = it + 1;
-//                if(next == points.end()){
-//                    next = points.begin();
-//                }
-//                renderer.draw_line(*it, *next);
-//            }
         };
 
         void update(double dt) override {
-            if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0)
-                move_x_y_z(_move.x(), _move.y(), _move.z());
+            init_mutation_matrix();
+            update_mutation();
+            do_mutation();
+        }
 
+        void do_mutation(){
             matrix temp = matrix::create_extra_row(_m);
             temp = temp * _mutation;
             _m = matrix::remove_extra_row(temp);
-            init_mutation_matrix();
+        }
+
+        void update_mutation(){
+            if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0)
+                move_x_y_z(_move.x(), _move.y(), _move.z());
         }
 
         void move_x_y_z(double amount_x, double amount_y, double amount_z){
@@ -105,7 +103,7 @@ namespace linalg {
             switch (event.key.keysym.scancode){
                 case SDL_SCANCODE_W :
                     if(button_pressed){
-                        _move.y(-0.01);
+                        _move.y(0.01);
                     }
                     else{
                         _move.y(0);
@@ -113,7 +111,7 @@ namespace linalg {
                     break;
                 case SDL_SCANCODE_S :
                     if(button_pressed){
-                        _move.y(0.01);
+                        _move.y(-0.01);
                     }
                     else{
                         _move.y(0);
@@ -133,6 +131,22 @@ namespace linalg {
                     }
                     else{
                         _move.x(0);
+                    }
+                    break;
+                case SDL_SCANCODE_Z :
+                    if(button_pressed){
+                        _move.z(0.01);
+                    }
+                    else{
+                        _move.z(0);
+                    }
+                    break;
+                case SDL_SCANCODE_X :
+                    if(button_pressed){
+                        _move.z(-0.01);
+                    }
+                    else{
+                        _move.z(0);
                     }
                     break;
                 default:

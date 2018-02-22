@@ -30,6 +30,7 @@ namespace linalg {
         void draw_line(point from, point to) const;
         void draw_rect(point topLeft, point bottomRight) const;
         void draw_image(point center, const image& i) const;
+        void draw_polygon() const;
         void render() const;
     };
 }

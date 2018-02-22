@@ -53,4 +53,72 @@ namespace linalg {
 
         return a;
     }
+
+    void camera::update() {
+        update_position();
+    }
+
+    void camera::update_position() {
+        if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0){
+            _eye = _eye + _move;
+            _lookAt = _lookAt + _move;
+        }
+    }
+
+    void camera::handle_event(SDL_Event &event) {
+        bool button_pressed = event.key.type == SDL_KEYDOWN;
+
+        switch (event.key.keysym.scancode){
+            case SDL_SCANCODE_UP :
+                if(button_pressed){
+                    _move.y(0.01);
+                }
+                else{
+                    _move.y(0);
+                }
+                break;
+            case SDL_SCANCODE_DOWN :
+                if(button_pressed){
+                    _move.y(-0.01);
+                }
+                else{
+                    _move.y(0);
+                }
+                break;
+            case SDL_SCANCODE_LEFT :
+                if(button_pressed){
+                    _move.x(-0.01);
+                }
+                else{
+                    _move.x(0);
+                }
+                break;
+            case SDL_SCANCODE_RIGHT :
+                if(button_pressed){
+                    _move.x(0.01);
+                }
+                else{
+                    _move.x(0);
+                }
+                break;
+            case SDL_SCANCODE_PAGEUP :
+                if(button_pressed){
+                    _move.z(0.01);
+                }
+                else{
+                    _move.z(0);
+                }
+                break;
+            case SDL_SCANCODE_PAGEDOWN :
+                if(button_pressed){
+                    _move.z(-0.01);
+                }
+                else{
+                    _move.z(0);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
