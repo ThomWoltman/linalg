@@ -4,12 +4,13 @@
 #include "image.h"
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL/SDL_gfxPrimitives.h>
 
 namespace linalg {
 
     renderer::renderer(const window &w)
         : _ren { SDL_CreateRenderer(w._win, -1, SDL_RENDERER_ACCELERATED) },
-          _texture_cache {}
+          _texture_cache{}
     {
         require_sdl(_ren);
     }
@@ -47,6 +48,14 @@ namespace linalg {
         SDL_RenderDrawLine(_ren, from.x(), 720-(from.y()), to.x(), 720-(to.y()));
     }
 
+    void renderer::draw_line(point from, point to, int R, int G, int B) const {
+        if(from.w() < 0 || to.w() < 0){
+            return;
+        }
+        set_color(color{R,G,B});
+        SDL_RenderDrawLine(_ren, from.x(), 720-(from.y()), to.x(), 720-(to.y()));
+    }
+
     void renderer::draw_rect(point topLeft, point bottomRight) const {
         SDL_Rect r;
         r.x = topLeft.x();
@@ -75,7 +84,17 @@ namespace linalg {
     }
 
     void renderer::draw_polygon() const {
-
+//        SDL_Surface* surface = new SDL_Surface{};
+//
+//        short s[5] = { 400, 450, 450, 425, 300 };
+//        short t[5] = { 400, 410, 450, 425, 500};
+//
+//        filledPolygonRGBA(surface,
+//                          s, t,
+//                          5,
+//                          255, 0, 255, 155);
+//
+//        SDL_FreeSurface(surface);
     }
 
     void renderer::render() const {

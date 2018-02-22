@@ -28,6 +28,7 @@ namespace linalg {
         void clear() const;
         void set_color(color c) const;
         void draw_line(point from, point to) const;
+        void draw_line(point from, point to, int R, int G, int B) const;
         void draw_rect(point topLeft, point bottomRight) const;
         void draw_image(point center, const image& i) const;
         void draw_polygon() const;

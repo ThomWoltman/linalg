@@ -34,6 +34,8 @@ namespace linalg {
 
             _camera.update();
 
+            _renderer.draw_polygon();
+
             _renderer.render();
             
             SDL_Event e;

@@ -12,6 +12,7 @@ set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS_DEBUG} -fno-omit-frame
 # Find SDL
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_gfx REQUIRED)
 
 # Setup project directory environment vars
 set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -51,18 +51,18 @@ namespace linalg {
             }
 
 
-            renderer.draw_line(points[0], points[1]);
-            renderer.draw_line(points[0], points[3]);
+            renderer.draw_line(points[0], points[1], 255, 0, 0);
+            renderer.draw_line(points[0], points[3], 255, 0, 0);
             renderer.draw_line(points[0], points[4]);
-            renderer.draw_line(points[1], points[2]);
+            renderer.draw_line(points[1], points[2], 255, 0, 0);
             renderer.draw_line(points[1], points[5]);
-            renderer.draw_line(points[2], points[3]);
+            renderer.draw_line(points[2], points[3], 255, 0, 0);
             renderer.draw_line(points[2], points[6]);
             renderer.draw_line(points[3], points[7]);
-            renderer.draw_line(points[4], points[5]);
-            renderer.draw_line(points[4], points[7]);
-            renderer.draw_line(points[5], points[6]);
-            renderer.draw_line(points[6], points[7]);
+            renderer.draw_line(points[4], points[5], 255, 230, 0);
+            renderer.draw_line(points[4], points[7], 255, 230, 0);
+            renderer.draw_line(points[5], points[6], 255, 230, 0);
+            renderer.draw_line(points[6], points[7], 255, 230, 0);
         };
 
         void update(double dt) override {
