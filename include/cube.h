@@ -12,6 +12,7 @@ namespace linalg {
         matrix _mutation;
         double _width;
         point _move;
+        double pulse_value;
 
         void init_matrix(point origin) {
             std::vector<point> points;
@@ -66,9 +67,9 @@ namespace linalg {
         };
 
         void update(double dt) override {
-            init_mutation_matrix();
             update_mutation();
             do_mutation();
+            init_mutation_matrix();
         }
 
         void do_mutation(){
@@ -86,13 +87,73 @@ namespace linalg {
             _mutation = _mutation*matrix::create_translate_matrix_3d(amount_x, amount_y, amount_z);
         }
 
+        void scale(double amount_x, double amount_y, double amount_z){
+            _mutation = _mutation*matrix::create_scale_matrix_3d(amount_x, amount_y, amount_z);
+        }
+
+        void pulsate(){
+            point a { _m.get_value(0,0), _m.get_value(1,0), _m.get_value(2,0) };
+            point b { _m.get_value(0,1), _m.get_value(1,1), _m.get_value(2,1) };
+
+            double dist = distance(a, b);
+
+            if(dist > _width + 2) {
+                pulse_value = 0.9995;
+            }
+            else if(dist <= _width){
+                pulse_value = 1.0005;
+            }
+
+            //pulse_value = 1.000001;
+            point origin = get_origin();
+            move_x_y_z(-a.x(), -a.y(), -a.z());
+            scale(pulse_value, pulse_value, pulse_value);
+            move_x_y_z(a.x(), a.y(), a.z());
+        }
+
         point get_origin(){
-            point origin { _m.get_value(0,8), _m.get_value(1,8)};
+            point origin { _m.get_value(0,8), _m.get_value(1,8), _m.get_value(2,8)};
             return origin;
         }
 
-        void rotate(double degree){
+        void rotate_x(double degree){
+            point origin = get_origin();
+            double t1 = atan2(origin.z(), origin.x());
+            double t2 = atan2(origin.y(), sqrt(origin.x()*origin.x() + origin.z()*origin.z()));
 
+            move_x_y_z(-origin.x(), -origin.y(), -origin.z());
+
+            matrix rotate_y_inverse = matrix::create_rotate_y_matrix_3d(-t1);
+            matrix rotate_z_inverse = matrix::create_rotate_z_matrix_3d(-t2);
+
+            matrix rotate_x = matrix::create_rotate_x_matrix_3d(degree);
+
+            matrix rotate_z = matrix::create_rotate_z_matrix_3d(t2);
+            matrix rotate_y = matrix::create_rotate_y_matrix_3d(t1);
+
+            _mutation = _mutation*(rotate_y_inverse*rotate_z_inverse*rotate_x*rotate_z*rotate_y);
+
+            move_x_y_z(origin.x(), origin.y(), origin.z());
+        }
+
+        void rotate_y(double degree){
+            point origin = get_origin();
+            double t1 = atan2(origin.z(), origin.x());
+            double t2 = atan2(origin.y(), sqrt(origin.x()*origin.x() + origin.z()*origin.z()));
+
+            move_x_y_z(-origin.x(), -origin.y(), -origin.z());
+
+            matrix rotate_x_inverse = matrix::create_rotate_x_matrix_3d(-t1);
+            matrix rotate_z_inverse = matrix::create_rotate_z_matrix_3d(-t2);
+
+            matrix rotate_y = matrix::create_rotate_y_matrix_3d(degree);
+
+            matrix rotate_z = matrix::create_rotate_z_matrix_3d(t2);
+            matrix rotate_x = matrix::create_rotate_x_matrix_3d(t1);
+
+            _mutation = _mutation*(rotate_x_inverse*rotate_z_inverse*rotate_y*rotate_z*rotate_x);
+
+            move_x_y_z(origin.x(), origin.y(), origin.z());
         }
 
         point location() override { return get_origin(); };

@@ -71,7 +71,7 @@ namespace linalg {
         switch (event.key.keysym.scancode){
             case SDL_SCANCODE_UP :
                 if(button_pressed){
-                    _move.y(0.01);
+                    _move.y(0.1);
                 }
                 else{
                     _move.y(0);
@@ -79,7 +79,7 @@ namespace linalg {
                 break;
             case SDL_SCANCODE_DOWN :
                 if(button_pressed){
-                    _move.y(-0.01);
+                    _move.y(-0.1);
                 }
                 else{
                     _move.y(0);
@@ -87,7 +87,7 @@ namespace linalg {
                 break;
             case SDL_SCANCODE_LEFT :
                 if(button_pressed){
-                    _move.x(-0.01);
+                    _move.x(-0.1);
                 }
                 else{
                     _move.x(0);
@@ -95,7 +95,7 @@ namespace linalg {
                 break;
             case SDL_SCANCODE_RIGHT :
                 if(button_pressed){
-                    _move.x(0.01);
+                    _move.x(0.1);
                 }
                 else{
                     _move.x(0);
@@ -103,7 +103,7 @@ namespace linalg {
                 break;
             case SDL_SCANCODE_PAGEUP :
                 if(button_pressed){
-                    _move.z(0.01);
+                    _move.z(0.1);
                 }
                 else{
                     _move.z(0);
@@ -111,7 +111,7 @@ namespace linalg {
                 break;
             case SDL_SCANCODE_PAGEDOWN :
                 if(button_pressed){
-                    _move.z(-0.01);
+                    _move.z(-0.1);
                 }
                 else{
                     _move.z(0);

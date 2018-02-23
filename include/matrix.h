@@ -49,6 +49,14 @@ namespace linalg {
 
         static matrix create_translate_matrix_3d(double x, double y, double z);
 
+        static matrix create_scale_matrix_3d(double x, double y, double z);
+
+        static matrix create_rotate_x_matrix_3d(double degree);
+
+        static matrix create_rotate_y_matrix_3d(double degree);
+
+        static matrix create_rotate_z_matrix_3d(double degree);
+
         static matrix create_extra_row(matrix m);
 
         static matrix remove_extra_row(matrix m);

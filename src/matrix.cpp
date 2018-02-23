@@ -163,6 +163,47 @@ namespace linalg{
         return temp;
     }
 
+    matrix matrix::create_scale_matrix_3d(double x, double y, double z) {
+        matrix temp = matrix::create_identity_matrix(4);
+        temp.data[0][0] = x;
+        temp.data[1][1] = y;
+        temp.data[2][2] = z;
+
+        return temp;
+    }
+
+    matrix matrix::create_rotate_x_matrix_3d(double degree) {
+        matrix m = create_identity_matrix(4);
+        m.data[1][1] = cos(degree);
+        m.data[1][2] = -sin(degree);
+        m.data[2][1] = sin(degree);
+        m.data[2][2] = cos(degree);
+
+        return m;
+    }
+
+    matrix matrix::create_rotate_y_matrix_3d(double degree) {
+        matrix m = create_identity_matrix(4);
+
+        m.data[0][0] = cos(degree);
+        m.data[2][0] = -sin(degree);
+        m.data[0][2] = sin(degree);
+        m.data[2][2] = cos(degree);
+
+        return m;
+    }
+
+    matrix matrix::create_rotate_z_matrix_3d(double degree) {
+        matrix m = create_identity_matrix(4);
+
+        m.data[0][0] = cos(degree);
+        m.data[0][1] = -sin(degree);
+        m.data[1][0] = sin(degree);
+        m.data[1][1] = cos(degree);
+
+        return m;
+    }
+
     matrix matrix::create_identity_matrix(int size)
     {
         matrix temp(size, size);

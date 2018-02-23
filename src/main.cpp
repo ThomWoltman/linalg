@@ -10,6 +10,10 @@
 
 int main() {
     try {
+
+        std::cout << cos(30) << std::endl;
+        std::cout << cos(-30) << std::endl;
+
         linalg::base_systems base {};
         linalg::board s {};
         linalg::background b { linalg::image { "resources/1200px-Hyades.jpg" } };

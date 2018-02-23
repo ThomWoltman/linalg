@@ -7,7 +7,7 @@ namespace linalg {
     board::board() : _window { "LINALG", 720, 720 },
                      _renderer { _window },
                      _square2d{{300.0, 300.0}, 100.0},
-                     _cube1{{ 0.0, 0.0, 50.0}, 10.0},
+                     _cube1{{ 0, 0, 0}, 10.0},
                      _cube2{{ 10.0, 0.0, 50.0}, 10.0}{}
 
     void board::play() {
@@ -27,8 +27,13 @@ namespace linalg {
 //            _cube.move_x_y_z(0,-0.005,0);
 //            _cube.move_x_y_z(0,0,-0.005);
 
+            _cube1.rotate_x(0.001);
+            //_cube1.rotate_y(0.001);
             _cube1.update(0);
             _cube1.draw(_renderer, _camera);
+
+            _cube2.pulsate();
+            //_cube2.rotate_x(0.001);
             _cube2.update(0);
             _cube2.draw(_renderer, _camera);
 
