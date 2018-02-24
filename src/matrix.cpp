@@ -186,8 +186,8 @@ namespace linalg{
         matrix m = create_identity_matrix(4);
 
         m.data[0][0] = cos(degree);
-        m.data[2][0] = -sin(degree);
-        m.data[0][2] = sin(degree);
+        m.data[2][0] = sin(degree);
+        m.data[0][2] = -sin(degree);
         m.data[2][2] = cos(degree);
 
         return m;

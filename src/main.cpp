@@ -11,8 +11,8 @@
 int main() {
     try {
 
-        std::cout << cos(30) << std::endl;
-        std::cout << cos(-30) << std::endl;
+        std::cout << atan2(0, 0) << std::endl;
+        std::cout << atan2(-30, -30) << std::endl;
 
         linalg::base_systems base {};
         linalg::board s {};

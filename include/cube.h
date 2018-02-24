@@ -13,6 +13,8 @@ namespace linalg {
         double _width;
         point _move;
         double pulse_value;
+        double rotate_x_value = 0;
+        double rotate_y_value = 0;
 
         void init_matrix(point origin) {
             std::vector<point> points;
@@ -26,7 +28,11 @@ namespace linalg {
             points.emplace_back(point{origin.x()+_width/2, origin.y()-_width/2, origin.z() + _width/2});
             points.push_back(origin);
 
-            _m = matrix(3, 9, points);
+            points.emplace_back(point { origin.x() + _width/2, origin.y(), origin.z()}); //local x-axis
+            points.emplace_back(point { origin.x(), origin.y() + _width/2, origin.z()}); //local y-axis
+            points.emplace_back(point { origin.x(), origin.y(), origin.z() + -_width/2}); //local z-axis
+
+            _m = matrix(3, 12, points);
         }
 
         void init_mutation_matrix(){
@@ -45,12 +51,11 @@ namespace linalg {
 
             std::vector<point> points;
 
-            for(int i = 0; i < result.get_columns() - 1; i++){
+            for(int i = 0; i < result.get_columns(); i++){
                 point p { result.get_value(0, i), result.get_value(1, i), result.get_value(2, i), result.get_value(3, i) };
                 p = cam.correct_vector(p);
                 points.push_back(p);
             }
-
 
             renderer.draw_line(points[0], points[1], 255, 0, 0);
             renderer.draw_line(points[0], points[3], 255, 0, 0);
@@ -64,6 +69,9 @@ namespace linalg {
             renderer.draw_line(points[4], points[7], 255, 230, 0);
             renderer.draw_line(points[5], points[6], 255, 230, 0);
             renderer.draw_line(points[6], points[7], 255, 230, 0);
+            renderer.draw_line(points[8], points[9], 255,255,255);
+            renderer.draw_line(points[8], points[10], 0, 255, 0);
+            renderer.draw_line(points[8], points[11], 255, 0, 0);
         };
 
         void update(double dt) override {
@@ -81,6 +89,10 @@ namespace linalg {
         void update_mutation(){
             if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0)
                 move_x_y_z(_move.x(), _move.y(), _move.z());
+            if(rotate_x_value != 0)
+                rotate_x(rotate_x_value);
+            if(rotate_y_value != 0)
+                rotate_y(rotate_y_value);
         }
 
         void move_x_y_z(double amount_x, double amount_y, double amount_z){
@@ -116,10 +128,29 @@ namespace linalg {
             return origin;
         }
 
+        point get_x_axis(){
+            point origin { _m.get_value(0,9), _m.get_value(1,9), _m.get_value(2,9)};
+            return origin;
+        }
+
+        point get_y_axis(){
+            point origin { _m.get_value(0,10), _m.get_value(1,10), _m.get_value(2,10)};
+            return origin;
+        }
+
+        point get_z_axis(){
+            point origin { _m.get_value(0,11), _m.get_value(1,11), _m.get_value(2,11)};
+            return origin;
+        }
+
         void rotate_x(double degree){
             point origin = get_origin();
-            double t1 = atan2(origin.z(), origin.x());
-            double t2 = atan2(origin.y(), sqrt(origin.x()*origin.x() + origin.z()*origin.z()));
+            point x_axis = get_x_axis();
+
+            point new_x_axis = x_axis - origin;
+
+            double t1 = atan2(new_x_axis.z(), new_x_axis.x());
+            double t2 = atan2(new_x_axis.y(), sqrt(new_x_axis.x()*new_x_axis.x() + new_x_axis.z()*new_x_axis.z()));
 
             move_x_y_z(-origin.x(), -origin.y(), -origin.z());
 
@@ -138,8 +169,12 @@ namespace linalg {
 
         void rotate_y(double degree){
             point origin = get_origin();
-            double t1 = atan2(origin.z(), origin.x());
-            double t2 = atan2(origin.y(), sqrt(origin.x()*origin.x() + origin.z()*origin.z()));
+            point y_axis = get_y_axis();
+
+            point new_y_axis = y_axis - origin;
+
+            double t1 = atan2(new_y_axis.z(), new_y_axis.y());
+            double t2 = atan2(new_y_axis.x(), sqrt(new_y_axis.y()*new_y_axis.y() + new_y_axis.z()*new_y_axis.z()));
 
             move_x_y_z(-origin.x(), -origin.y(), -origin.z());
 
@@ -178,22 +213,22 @@ namespace linalg {
                         _move.y(0);
                     }
                     break;
-                case SDL_SCANCODE_D :
-                    if(button_pressed){
-                        _move.x(0.01);
-                    }
-                    else{
-                        _move.x(0);
-                    }
-                    break;
-                case SDL_SCANCODE_A :
-                    if(button_pressed){
-                        _move.x(-0.01);
-                    }
-                    else{
-                        _move.x(0);
-                    }
-                    break;
+//                case SDL_SCANCODE_D :
+//                    if(button_pressed){
+//                        _move.x(0.01);
+//                    }
+//                    else{
+//                        _move.x(0);
+//                    }
+//                    break;
+//                case SDL_SCANCODE_A :
+//                    if(button_pressed){
+//                        _move.x(-0.01);
+//                    }
+//                    else{
+//                        _move.x(0);
+//                    }
+//                    break;
                 case SDL_SCANCODE_Z :
                     if(button_pressed){
                         _move.z(0.01);
@@ -210,6 +245,46 @@ namespace linalg {
                         _move.z(0);
                     }
                     break;
+                case SDL_SCANCODE_Q :
+                    if(button_pressed){
+                        rotate_x_value = -0.01;
+                    }
+                    else{
+                        rotate_x_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_E :
+                    if(button_pressed){
+                        rotate_x_value = 0.01;
+                    }
+                    else{
+                        rotate_x_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_A :
+                    if(button_pressed){
+                        rotate_y_value = -0.01;
+                    }
+                    else{
+                        rotate_y_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_D :
+                    if(button_pressed){
+                        rotate_y_value = 0.01;
+                    }
+                    else{
+                        rotate_y_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_LSHIFT :
+                    if(button_pressed){
+                        point move = get_x_axis() - get_origin();
+                        _move = {move.x()*0.01, move.y()*0.01, move.z()*0.01};
+                    }
+                    else{
+                        _move = {0,0,0};
+                    }
                 default:
                     break;
             }
