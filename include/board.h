@@ -11,14 +11,15 @@ namespace linalg {
     class cube;
     class spaceship;
     class board_piece;
+    class shape;
     class board {
         window _window;
         renderer _renderer;
         std::vector<board_piece*> _board_pieces;
         square _square2d;
-        std::vector<cube*> _cubes;
+        std::vector<shape*> _cubes;
         camera _camera;
-        spaceship* _spaceship;
+        shape* _spaceship;
         bool _playing;
         void update();
         void draw();
@@ -31,9 +32,9 @@ namespace linalg {
         void add_board_piece(board_piece& a) {
             _board_pieces.push_back(&a);
         }
-        void add_cube(cube* cube);
+        void add_cube(shape* cube);
         void add_spaceship(spaceship* spaceship);
-        std::vector<cube*>* get_cubes();
+        std::vector<shape*>* get_cubes();
     };
 }
 #endif

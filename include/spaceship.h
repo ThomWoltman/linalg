@@ -5,8 +5,13 @@
 #include "board.h"
 
 namespace linalg {
-    class spaceship : public cube {
+    class spaceship : public shape {
     private:
+        bool _draw_help_line = false;
+
+        void init_mutation_matrix(){
+            _mutation = matrix::create_identity_matrix(4);
+        }
 
         void init_matrix(point origin, double width, double height) {
             std::vector<point> points;
@@ -20,15 +25,17 @@ namespace linalg {
             points.emplace_back(point{origin.x()+height/2, origin.y()-width/2, origin.z() + height/2});
             points.push_back(origin);
 
-            points.emplace_back(point { origin.x() + _width/2, origin.y(), origin.z()}); //local x-axis
-            points.emplace_back(point { origin.x(), origin.y() + _width/2, origin.z()}); //local y-axis
-            points.emplace_back(point { origin.x(), origin.y(), origin.z() + -_width/2}); //local z-axis
+            points.emplace_back(point { origin.x() + width/2, origin.y(), origin.z()}); //local x-axis
+            points.emplace_back(point { origin.x(), origin.y() + width/2, origin.z()}); //local y-axis
+            points.emplace_back(point { origin.x(), origin.y(), origin.z() + width/2}); //local z-axis
 
             _m = matrix(3, 12, points);
         }
     public:
-        spaceship(point origin, double width, double height, board* board) : cube{origin, width, board} {
+        spaceship(point origin, double width, double height, board* board) {
+            _board = board;
             init_matrix(origin, width, height);
+            init_mutation_matrix();
         }
 
         void update(double dt) override {
@@ -63,26 +70,49 @@ namespace linalg {
                 rotate_z(rotate_z_value);
         }
 
-        void handle_events(SDL_Event &event){
+        void draw(renderer &renderer, camera cam) override {
+            if(!_is_alive)
+                return;
+
+            matrix temp = matrix::create_extra_row(_m);
+            matrix result = temp*(cam.create_camera_matrix() * cam.create_projection_matrix());
+
+            std::vector<point> points;
+
+            for(int i = 0; i < result.get_columns(); i++){
+                point p { result.get_value(0, i), result.get_value(1, i), result.get_value(2, i), result.get_value(3, i) };
+                p = cam.correct_vector(p);
+                points.push_back(p);
+            }
+
+            renderer.draw_line(points[0], points[1], 0, 255, 0);
+            renderer.draw_line(points[0], points[3], 255, 255, 255);
+            renderer.draw_line(points[0], points[4], 0, 255, 0);
+            renderer.draw_line(points[1], points[2], 255, 255, 255);
+            renderer.draw_line(points[1], points[5], 0, 255, 0);
+            renderer.draw_line(points[2], points[3], 255, 0, 0);
+            renderer.draw_line(points[2], points[6], 255, 0, 0);
+            renderer.draw_line(points[3], points[7], 255, 0, 0);
+            renderer.draw_line(points[4], points[5], 0, 255, 0);
+            renderer.draw_line(points[4], points[7], 0, 255, 255);
+            renderer.draw_line(points[5], points[6], 0, 255, 255);
+            renderer.draw_line(points[6], points[7], 255, 0, 0);
+            renderer.draw_line(points[8], points[9], 255,255,255);
+            renderer.draw_line(points[8], points[10], 0, 255, 0);
+            renderer.draw_line(points[8], points[11], 255, 0, 0);
+
+            if(_draw_help_line){
+                point vector = points[9] - points[8];
+                vector = vector * 20;
+                point _help_line = vector + points[8];
+                renderer.draw_line(points[8], _help_line, 255,255,0);
+            }
+        };
+
+        void handle_events(SDL_Event &event) override{
             bool button_pressed = event.key.type == SDL_KEYDOWN;
 
             switch (event.key.keysym.scancode){
-                case SDL_SCANCODE_Z :
-                    if(button_pressed){
-                        _move.z(0.01);
-                    }
-                    else{
-                        _move.z(0);
-                    }
-                    break;
-                case SDL_SCANCODE_X :
-                    if(button_pressed){
-                        _move.z(-0.01);
-                    }
-                    else{
-                        _move.z(0);
-                    }
-                    break;
                 case SDL_SCANCODE_Q :
                     if(button_pressed){
                         rotate_x_value = -0.01;
@@ -143,12 +173,7 @@ namespace linalg {
                     break;
                 case SDL_SCANCODE_H:
                     if(button_pressed){
-                        if(!_draw_help_line){
-                            _draw_help_line = true;
-                        }
-                        else{
-                            _draw_help_line = false;
-                        }
+                        _draw_help_line = !_draw_help_line;
                     }
                     break;
                 case SDL_SCANCODE_SPACE:

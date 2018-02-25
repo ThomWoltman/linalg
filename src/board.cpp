@@ -57,7 +57,7 @@ namespace linalg {
         }
     }
 
-    void board::add_cube(cube *cube) {
+    void board::add_cube(shape *cube) {
         _cubes.push_back(cube);
     }
 
@@ -65,7 +65,7 @@ namespace linalg {
         _spaceship = spaceship;
     }
 
-    std::vector<cube*>* board::get_cubes() {
+    std::vector<shape*>* board::get_cubes() {
         return &_cubes;
     }
 };
