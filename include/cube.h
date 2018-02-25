@@ -88,8 +88,11 @@ namespace linalg {
         }
 
         void update_mutation(){
-            if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0)
+            if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0){
+                point move = get_x_axis() - get_origin();
+                _move = {move.x()*0.01, move.y()*0.01, move.z()*0.01};
                 move_x_y_z(_move.x(), _move.y(), _move.z());
+            }
             if(rotate_x_value != 0)
                 rotate_x(rotate_x_value);
             if(rotate_y_value != 0)
