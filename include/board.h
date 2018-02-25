@@ -19,6 +19,10 @@ namespace linalg {
         std::vector<cube*> _cubes;
         camera _camera;
         spaceship* _spaceship;
+        bool _playing;
+        void update();
+        void draw();
+        void handle_events();
     public:
         board();
         ~board();
@@ -28,6 +32,7 @@ namespace linalg {
             _board_pieces.push_back(&a);
         }
         void add_cube(cube* cube);
+        void add_spaceship(spaceship* spaceship);
         std::vector<cube*>* get_cubes();
     };
 }
