@@ -65,9 +65,12 @@ namespace linalg {
         }
     }
 
-    void camera::turn_camera(double amount) {
+    void camera::turn_camera_x(double amount) {
         _lookAt.x(_lookAt.x()+amount);
-        _lookAt.z(_lookAt.z()+amount);
+    }
+
+    void camera::turn_camera_y(double amount) {
+        _lookAt.y(_lookAt.y()+amount);
     }
 
     void camera::handle_event(SDL_Event &event) {
@@ -76,12 +79,22 @@ namespace linalg {
         switch (event.key.keysym.scancode){
             case SDL_SCANCODE_KP_6 :
                 if(button_pressed){
-                    turn_camera(1);
+                    turn_camera_x(1);
                 }
                 break;
             case SDL_SCANCODE_KP_4 :
                 if(button_pressed){
-                    turn_camera(-1);
+                    turn_camera_x(-1);
+                }
+                break;
+            case SDL_SCANCODE_KP_8 :
+                if(button_pressed){
+                    turn_camera_y(1);
+                }
+                break;
+            case SDL_SCANCODE_KP_2 :
+                if(button_pressed){
+                    turn_camera_y(-1);
                 }
                 break;
             case SDL_SCANCODE_UP :
