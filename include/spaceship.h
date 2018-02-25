@@ -97,15 +97,17 @@ namespace linalg {
             renderer.draw_line(points[4], points[7], 0, 255, 255);
             renderer.draw_line(points[5], points[6], 0, 255, 255);
             renderer.draw_line(points[6], points[7], 255, 0, 0);
-            renderer.draw_line(points[8], points[9], 255,255,255);
-            renderer.draw_line(points[8], points[10], 0, 255, 0);
-            renderer.draw_line(points[8], points[11], 255, 0, 0);
 
             if(_draw_help_line){
                 point vector = points[9] - points[8];
                 vector = vector * 20;
                 point _help_line = vector + points[8];
+                //yellow aim line
                 renderer.draw_line(points[8], _help_line, 255,255,0);
+                //axis lines
+                renderer.draw_line(points[8], points[9], 255,255,255);
+                renderer.draw_line(points[8], points[10], 0, 255, 0);
+                renderer.draw_line(points[8], points[11], 255, 0, 0);
             }
         };
 

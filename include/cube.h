@@ -77,9 +77,9 @@ namespace linalg {
             renderer.draw_line(points[4], points[7], 0, 255, 255);
             renderer.draw_line(points[5], points[6], 0, 255, 255);
             renderer.draw_line(points[6], points[7], 255, 0, 0);
-            renderer.draw_line(points[8], points[9], 255,255,255);
-            renderer.draw_line(points[8], points[10], 0, 255, 0);
-            renderer.draw_line(points[8], points[11], 255, 0, 0);
+//            renderer.draw_line(points[8], points[9], 255,255,255); //local axis lines
+//            renderer.draw_line(points[8], points[10], 0, 255, 0);
+//            renderer.draw_line(points[8], points[11], 255, 0, 0);
         };
 
         void update(double dt) override {
