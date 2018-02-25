@@ -1,5 +1,6 @@
 #include "board_piece.h"
 #include "matrix.h"
+#include "board.h"
 
 #ifndef KMINTFRAMEWORK_CUBE_H
 #define KMINTFRAMEWORK_CUBE_H
@@ -7,7 +8,7 @@
 namespace linalg {
 
     class cube : public board_piece {
-    private:
+    protected:
         matrix _m;
         matrix _mutation;
         double _width;
@@ -16,6 +17,12 @@ namespace linalg {
         double rotate_x_value = 0;
         double rotate_y_value = 0;
         double rotate_z_value = 0;
+        double _move_speed = 0.01;
+        bool _draw_help_line = false;
+        point _help_line;
+        bool _is_alive = true;
+        board *_board;
+    private:
 
         void init_matrix(point origin) {
             std::vector<point> points;
@@ -35,17 +42,26 @@ namespace linalg {
 
             _m = matrix(3, 12, points);
         }
-
+    public:
         void init_mutation_matrix(){
             _mutation = matrix::create_identity_matrix(4);
         }
-    public:
-        cube(point origin, double width) : _width{width} {
+
+        cube(point origin, double width, board* board) : _width{width}, _board{board} {
             init_matrix(origin);
             init_mutation_matrix();
         };
 
+        cube(point origin, double width, double speed_x, double speed_y, double speed_z, board* board) : _width{width}, _board{board} {
+            init_matrix(origin);
+            init_mutation_matrix();
+
+            _move = {speed_x, speed_y, speed_z};
+        };
+
         void draw(renderer &renderer, camera cam) override {
+            if(!_is_alive)
+                return;
 
             matrix temp = matrix::create_extra_row(_m);
             matrix result = temp*(cam.create_camera_matrix() * cam.create_projection_matrix());
@@ -58,27 +74,56 @@ namespace linalg {
                 points.push_back(p);
             }
 
-            renderer.draw_line(points[0], points[1], 255, 0, 0);
-            renderer.draw_line(points[0], points[3], 255, 0, 0);
-            renderer.draw_line(points[0], points[4]);
-            renderer.draw_line(points[1], points[2], 255, 0, 0);
-            renderer.draw_line(points[1], points[5]);
+            renderer.draw_line(points[0], points[1], 0, 255, 0);
+            renderer.draw_line(points[0], points[3], 255, 255, 255);
+            renderer.draw_line(points[0], points[4], 0, 255, 0);
+            renderer.draw_line(points[1], points[2], 255, 255, 255);
+            renderer.draw_line(points[1], points[5], 0, 255, 0);
             renderer.draw_line(points[2], points[3], 255, 0, 0);
-            renderer.draw_line(points[2], points[6]);
-            renderer.draw_line(points[3], points[7]);
-            renderer.draw_line(points[4], points[5], 255, 230, 0);
-            renderer.draw_line(points[4], points[7], 255, 230, 0);
-            renderer.draw_line(points[5], points[6], 255, 230, 0);
-            renderer.draw_line(points[6], points[7], 255, 230, 0);
+            renderer.draw_line(points[2], points[6], 255, 0, 0);
+            renderer.draw_line(points[3], points[7], 255, 0, 0);
+            renderer.draw_line(points[4], points[5], 0, 255, 0);
+            renderer.draw_line(points[4], points[7], 0, 255, 255);
+            renderer.draw_line(points[5], points[6], 0, 255, 255);
+            renderer.draw_line(points[6], points[7], 255, 0, 0);
             renderer.draw_line(points[8], points[9], 255,255,255);
             renderer.draw_line(points[8], points[10], 0, 255, 0);
             renderer.draw_line(points[8], points[11], 255, 0, 0);
+
+            if(_draw_help_line){
+                point vector = points[9] - points[8];
+                vector = vector * 20;
+                _help_line = vector + points[8];
+                renderer.draw_line(points[8], _help_line, 255,255,0);
+            }
         };
 
-        void update(double dt) override {
+        virtual void update(double dt) override {
+            if(!_is_alive)
+                return;
             update_mutation();
             do_mutation();
             init_mutation_matrix();
+        }
+
+        void update_is_alive(){
+            auto cubes = _board->get_cubes();
+
+            std::vector<point> points;
+
+            for(int i = 0; i < _m.get_columns(); i++){
+                point p { _m.get_value(0, i), _m.get_value(1, i), _m.get_value(2, i) };
+                points.push_back(p);
+            }
+
+            for(auto c : *cubes){
+                if(!(c->get_origin() == points[8])) {
+                    if (c->is_colliding(points)) {
+                        die();
+                        c->die();
+                    }
+                }
+            }
         }
 
         void do_mutation(){
@@ -87,10 +132,8 @@ namespace linalg {
             _m = matrix::remove_extra_row(temp);
         }
 
-        void update_mutation(){
+        virtual void update_mutation(){
             if(_move.x() != 0 || _move.y() != 0 || _move.z() != 0){
-                point move = get_x_axis() - get_origin();
-                _move = {move.x()*0.01, move.y()*0.01, move.z()*0.01};
                 move_x_y_z(_move.x(), _move.y(), _move.z());
             }
             if(rotate_x_value != 0)
@@ -124,9 +167,9 @@ namespace linalg {
 
             //pulse_value = 1.000001;
             point origin = get_origin();
-            move_x_y_z(-a.x(), -a.y(), -a.z());
+            move_x_y_z(-origin.x(), -origin.y(), -origin.z());
             scale(pulse_value, pulse_value, pulse_value);
-            move_x_y_z(a.x(), a.y(), a.z());
+            move_x_y_z(origin.x(), origin.y(), origin.z());
         }
 
         point get_origin(){
@@ -223,117 +266,42 @@ namespace linalg {
 
         point location() override { return get_origin(); };
 
-        void handle_events(SDL_Event &event){
-            bool button_pressed = event.key.type == SDL_KEYDOWN;
+        void die(){
+            _is_alive = false;
+        }
 
-            switch (event.key.keysym.scancode){
-//                case SDL_SCANCODE_W :
-//                    if(button_pressed){
-//                        _move.y(0.01);
-//                    }
-//                    else{
-//                        _move.y(0);
-//                    }
-//                    break;
-//                case SDL_SCANCODE_S :
-//                    if(button_pressed){
-//                        _move.y(-0.01);
-//                    }
-//                    else{
-//                        _move.y(0);
-//                    }
-//                    break;
-//                case SDL_SCANCODE_D :
-//                    if(button_pressed){
-//                        _move.x(0.01);
-//                    }
-//                    else{
-//                        _move.x(0);
-//                    }
-//                    break;
-//                case SDL_SCANCODE_A :
-//                    if(button_pressed){
-//                        _move.x(-0.01);
-//                    }
-//                    else{
-//                        _move.x(0);
-//                    }
-//                    break;
-                case SDL_SCANCODE_Z :
-                    if(button_pressed){
-                        _move.z(0.01);
-                    }
-                    else{
-                        _move.z(0);
-                    }
-                    break;
-                case SDL_SCANCODE_X :
-                    if(button_pressed){
-                        _move.z(-0.01);
-                    }
-                    else{
-                        _move.z(0);
-                    }
-                    break;
-                case SDL_SCANCODE_Q :
-                    if(button_pressed){
-                        rotate_x_value = -0.01;
-                    }
-                    else{
-                        rotate_x_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_E :
-                    if(button_pressed){
-                        rotate_x_value = 0.01;
-                    }
-                    else{
-                        rotate_x_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_A :
-                    if(button_pressed){
-                        rotate_y_value = -0.01;
-                    }
-                    else{
-                        rotate_y_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_D :
-                    if(button_pressed){
-                        rotate_y_value = 0.01;
-                    }
-                    else{
-                        rotate_y_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_W :
-                    if(button_pressed){
-                        rotate_z_value = 0.01;
-                    }
-                    else{
-                        rotate_z_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_S :
-                    if(button_pressed){
-                        rotate_z_value = -0.01;
-                    }
-                    else{
-                        rotate_z_value = 0;
-                    }
-                    break;
-                case SDL_SCANCODE_LSHIFT :
-                    if(button_pressed){
-                        point move = get_x_axis() - get_origin();
-                        _move = {move.x()*0.01, move.y()*0.01, move.z()*0.01};
-                    }
-                    else{
-                        _move = {0,0,0};
-                    }
-                default:
-                    break;
+        bool is_colliding(std::vector<point> points){
+            if(points[8] == get_origin())
+                return false;
+            point p { round(_m.get_value(0, 2)*1000), round(_m.get_value(1, 2)*1000), round(_m.get_value(2, 2)*1000) };
+            point q { round(_m.get_value(0, 3)*1000), round(_m.get_value(1, 3)*1000), round(_m.get_value(2, 3)*1000) };
+            point s { round(_m.get_value(0, 6)*1000), round(_m.get_value(1, 6)*1000), round(_m.get_value(2, 6)*1000) };
+            point t { round(_m.get_value(0, 7)*1000), round(_m.get_value(1, 7)*1000), round(_m.get_value(2, 7)*1000) };
+
+            point pq = q - p;
+            point ps = s - p;
+
+            point tq = q- t;
+            point ts = s- t;
+
+            point normalize_n1 = cross_product(pq, ps);
+            point normalize_n2 = cross_product(tq, ts);
+
+            double result1 = dot(normalize_n1, p);
+            double result2 = dot(normalize_n2, t);
+
+            double example = dot(q, normalize_n1);
+
+            for(auto p1 : points){
+                point rounded_point = { round(p1.x()*1000), round(p1.y()*1000), round(p1.z()*1000)};
+                double value1 = dot(rounded_point, normalize_n1);
+                double value2 = dot(rounded_point, normalize_n2);
+                if(value1 == result1 || value2 == result2){
+                    return true;
+                }
             }
+
+            return false;
         }
     };
 }

@@ -2,13 +2,28 @@
 #include "point.h"
 #include "board_piece.h"
 #include <SDL2/SDL.h>
+#include "spaceship.h"
+#include "cube.h"
 
 namespace linalg {
     board::board() : _window { "LINALG", 720, 720 },
                      _renderer { _window },
-                     _square2d{{300.0, 300.0}, 100.0},
-                     _cube1{{ 0.0, 0.0, 50}, 10.0},
-                     _cube2{{ 0.0, 0.0, 0.0}, 10.0}{}
+                     _square2d{{300.0, 300.0}, 100.0}{
+        _spaceship = new spaceship { {0, 0, 50}, 2, 10, this };
+        _cubes.push_back(new cube{{ 20, 0.0, 50.0}, 10.0, this});
+//        _cubes.push_back(new cube{{ 20.0, 0.0, 50.0}, 10.0, this});
+//        _cubes.push_back(new cube{{ 0.0, 100.0, 0.0}, 10.0, this});
+//        _cubes.push_back(new cube{{ 0.0, -100.0, -50.0}, 10.0, this});
+//        _cubes.push_back(new cube{{ -200.0, 0.0, -100.0}, 10.0, this});
+    }
+
+    board::~board() {
+        { delete _spaceship;
+            for( auto cube : _cubes){
+                delete cube;
+            }
+        }
+    }
 
     void board::play() {
         bool playing = true;
@@ -18,37 +33,40 @@ namespace linalg {
                 a->draw(_renderer, _camera);
                 a->update(0);
             }
-            //_square2d.move_x_y(0.1, 0.10);
-//            _square2d.rotate(0.01);
-//
-//            _square2d.update(0);
-//            _square2d.draw(_renderer, _camera);
-//            _cube.move_x_y_z(0.005,0,0);
-//            _cube.move_x_y_z(0,-0.005,0);
-//            _cube.move_x_y_z(0,0,-0.005);
 
-            //_cube1.rotate_x(0.001);
-            //_cube1.rotate_y(0.001);
-            _cube1.update(0);
-            _cube1.draw(_renderer, _camera);
+            _spaceship->update(0);
 
-            _cube2.pulsate();
-            //_cube2.rotate_x(0.001);
-            _cube2.update(0);
-            _cube2.draw(_renderer, _camera);
 
+            for(auto cube : _cubes){
+                cube->pulsate();
+                cube->update(0);
+                cube->draw(_renderer, _camera);
+            }
+
+//            for(auto cube : _cubes){
+//                cube->update_is_alive();
+//            }
+
+            _spaceship->draw(_renderer, _camera);
             _camera.update();
-
-            _renderer.draw_polygon();
 
             _renderer.render();
             
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
                 playing = (e.type != SDL_QUIT);
-                _cube1.handle_events(e);
+                //_cube1.handle_events(e);
+                _spaceship->handle_events(e);
                 _camera.handle_event(e);
             }
         }
+    }
+
+    void board::add_cube(cube *cube) {
+        _cubes.push_back(cube);
+    }
+
+    std::vector<cube*>* board::get_cubes() {
+        return &_cubes;
     }
 };

@@ -33,8 +33,16 @@ namespace linalg {
         return { a.x() - b.x(), a.y() - b.y(), a.z() - b.z(), a.w() - b.w() };
     }
 
+    inline bool operator==(point a, point b) {
+        return a.x() == b.x() && a.y() == b.y() && a.z() == b.z();
+    }
+
     inline point operator+(point a, point b) {
         return { a.x() + b.x(), a.y() + b.y(), a.z() + b.z(), a.w() + b.w() };
+    }
+
+    inline point operator*(point a, double multiplier) {
+        return { a.x()*multiplier, a.y()*multiplier, a.z()*multiplier, a.w()*multiplier };
     }
 
     inline auto dot(point a, point b) { //inproduct
