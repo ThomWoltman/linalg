@@ -7,8 +7,8 @@ namespace linalg {
     board::board() : _window { "LINALG", 720, 720 },
                      _renderer { _window },
                      _square2d{{300.0, 300.0}, 100.0},
-                     _cube1{{ 0.0, 0.0, 0}, 10.0},
-                     _cube2{{ 10.0, 0.0, 50.0}, 10.0}{}
+                     _cube1{{ 0.0, 0.0, 50}, 10.0},
+                     _cube2{{ 0.0, 0.0, 0.0}, 10.0}{}
 
     void board::play() {
         bool playing = true;

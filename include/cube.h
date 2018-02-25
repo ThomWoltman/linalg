@@ -15,6 +15,7 @@ namespace linalg {
         double pulse_value;
         double rotate_x_value = 0;
         double rotate_y_value = 0;
+        double rotate_z_value = 0;
 
         void init_matrix(point origin) {
             std::vector<point> points;
@@ -93,6 +94,8 @@ namespace linalg {
                 rotate_x(rotate_x_value);
             if(rotate_y_value != 0)
                 rotate_y(rotate_y_value);
+            if(rotate_z_value != 0)
+                rotate_z(rotate_z_value);
         }
 
         void move_x_y_z(double amount_x, double amount_y, double amount_z){
@@ -174,19 +177,43 @@ namespace linalg {
             point new_y_axis = y_axis - origin;
 
             double t1 = atan2(new_y_axis.z(), new_y_axis.y());
-            double t2 = atan2(new_y_axis.x(), sqrt(new_y_axis.y()*new_y_axis.y() + new_y_axis.z()*new_y_axis.z()));
+            double t2 = atan2(new_y_axis.x(), sqrt(new_y_axis.z()*new_y_axis.z() + new_y_axis.y()*new_y_axis.y()));
 
             move_x_y_z(-origin.x(), -origin.y(), -origin.z());
 
             matrix rotate_x_inverse = matrix::create_rotate_x_matrix_3d(-t1);
-            matrix rotate_z_inverse = matrix::create_rotate_z_matrix_3d(-t2);
+            matrix rotate_z_inverse = matrix::create_rotate_z_matrix_3d(t2);
 
             matrix rotate_y = matrix::create_rotate_y_matrix_3d(degree);
 
-            matrix rotate_z = matrix::create_rotate_z_matrix_3d(t2);
+            matrix rotate_z = matrix::create_rotate_z_matrix_3d(-t2);
             matrix rotate_x = matrix::create_rotate_x_matrix_3d(t1);
 
             _mutation = _mutation*(rotate_x_inverse*rotate_z_inverse*rotate_y*rotate_z*rotate_x);
+
+            move_x_y_z(origin.x(), origin.y(), origin.z());
+        }
+
+        void rotate_z(double degree){
+            point origin = get_origin();
+            point z_axis = get_z_axis();
+
+            point new_z_axis = z_axis - origin;
+
+            double t1 = atan2(new_z_axis.y(), new_z_axis.z());
+            double t2 = atan2(new_z_axis.x(), sqrt(new_z_axis.z()*new_z_axis.z() + new_z_axis.y()*new_z_axis.y()));
+
+            move_x_y_z(-origin.x(), -origin.y(), -origin.z());
+
+            matrix rotate_x_inverse = matrix::create_rotate_x_matrix_3d(t1);
+            matrix rotate_y_inverse = matrix::create_rotate_y_matrix_3d(t2);
+
+            matrix rotate_z = matrix::create_rotate_z_matrix_3d(degree);
+
+            matrix rotate_y = matrix::create_rotate_y_matrix_3d(-t2);
+            matrix rotate_x = matrix::create_rotate_x_matrix_3d(-t1);
+
+            _mutation = _mutation*(rotate_x_inverse*rotate_y_inverse*rotate_z*rotate_y*rotate_x);
 
             move_x_y_z(origin.x(), origin.y(), origin.z());
         }
@@ -197,22 +224,22 @@ namespace linalg {
             bool button_pressed = event.key.type == SDL_KEYDOWN;
 
             switch (event.key.keysym.scancode){
-                case SDL_SCANCODE_W :
-                    if(button_pressed){
-                        _move.y(0.01);
-                    }
-                    else{
-                        _move.y(0);
-                    }
-                    break;
-                case SDL_SCANCODE_S :
-                    if(button_pressed){
-                        _move.y(-0.01);
-                    }
-                    else{
-                        _move.y(0);
-                    }
-                    break;
+//                case SDL_SCANCODE_W :
+//                    if(button_pressed){
+//                        _move.y(0.01);
+//                    }
+//                    else{
+//                        _move.y(0);
+//                    }
+//                    break;
+//                case SDL_SCANCODE_S :
+//                    if(button_pressed){
+//                        _move.y(-0.01);
+//                    }
+//                    else{
+//                        _move.y(0);
+//                    }
+//                    break;
 //                case SDL_SCANCODE_D :
 //                    if(button_pressed){
 //                        _move.x(0.01);
@@ -275,6 +302,22 @@ namespace linalg {
                     }
                     else{
                         rotate_y_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_W :
+                    if(button_pressed){
+                        rotate_z_value = 0.01;
+                    }
+                    else{
+                        rotate_z_value = 0;
+                    }
+                    break;
+                case SDL_SCANCODE_S :
+                    if(button_pressed){
+                        rotate_z_value = -0.01;
+                    }
+                    else{
+                        rotate_z_value = 0;
                     }
                     break;
                 case SDL_SCANCODE_LSHIFT :
