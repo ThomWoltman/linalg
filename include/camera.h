@@ -22,6 +22,7 @@ namespace linalg {
         matrix create_camera_matrix();
         matrix create_projection_matrix();
         point correct_vector(point a);
+        void turn_camera(double amount);
         void update();
         void update_position();
         void handle_event(SDL_Event &event);
